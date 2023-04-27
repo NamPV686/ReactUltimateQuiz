@@ -1,11 +1,12 @@
 import './App.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from './components/Header/Header';
 
 const App = () => {
 
   return (
     <div className="app-container">
-      <button class="btn btn-primary">Primary</button>
+      <Header />
     </div>
   );
 }
