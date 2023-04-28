@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import {NavLink} from 'react-router-dom';
 
-const Header = () => {
+const Header = (props) => {
   return (
     <Navbar bg="light" expand="lg">
       <Container>
