@@ -17,6 +17,8 @@ const Header = (props) => {
             <NavLink to="/admins" className="nav-link">Admin</NavLink>         
           </Nav>
           <Nav>
+            <button className='btn-login'>Log in</button>
+            <button className='btn-signup'>Sign up</button>
           <NavDropdown title="Setting" id="basic-nav-dropdown">
               <NavDropdown.Item>Login</NavDropdown.Item>
               <NavDropdown.Item>Logout</NavDropdown.Item>
