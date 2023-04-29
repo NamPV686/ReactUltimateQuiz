@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 
-const User = () => {
+const User = (props) => {
     return(
         <div>
             User Page
