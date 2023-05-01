@@ -12,8 +12,8 @@ const ManagerUser = () => {
                 </div>
                 <div>
                     Table
-                    <ModalCreateUser />
                 </div>
+                <ModalCreateUser />
             </div>
         </div>
     )
