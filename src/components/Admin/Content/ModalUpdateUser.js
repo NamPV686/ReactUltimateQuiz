@@ -3,12 +3,12 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {FcPlus} from 'react-icons/fc'
 import {toast } from 'react-toastify';
-import {postCreateNewUser} from '../../../services/apiService';
+import {putUpdateUser} from '../../../services/apiService';
 import _ from 'lodash';
 import './ManageUser.scss'
 
 const ModalUpdateUser = (props) => {
-  const {show, setShow, dataUpdate} = props;
+  const {show, setShow, dataUpdate, resetUpdateData} = props;
 
   const handleClose = () => {
     setShow(false);
@@ -17,7 +17,8 @@ const ModalUpdateUser = (props) => {
     setUsername("");
     setRole("USER");
     setImage("");
-    setPreviewImage("")
+    setPreviewImage("");
+    resetUpdateData();
   };
 
   const[email, setEmail] = useState("");
@@ -48,32 +49,9 @@ const ModalUpdateUser = (props) => {
     }
   }
 
-  const handleSubmitCreate = async() => {
-    //Validate
-
-    const validateEmail = (email) => {
-      return String(email)
-        .toLowerCase()
-        .match(
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
-    };
-
-    const isValidEmail = validateEmail(email);
-
-    if(!isValidEmail){
-      toast.error("Invalid email")
-      return;
-    }
-
-    if(!password){
-      toast.error("Invalid password")
-      return;
-    }
-
+  const handleSubmitUpdate = async() => {
     //Call API
-
-    let data = await postCreateNewUser(email, password, username, role, image);
+    let data = await putUpdateUser(dataUpdate.id, username, role, image);
 
     if(data && data.EC === 0){
       toast.success(data.EM);
@@ -154,7 +132,7 @@ const ModalUpdateUser = (props) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => handleSubmitCreate()}>
+          <Button variant="primary" onClick={() => handleSubmitUpdate()}>
             Save
           </Button>
         </Modal.Footer>
