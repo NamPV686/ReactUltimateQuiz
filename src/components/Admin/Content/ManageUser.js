@@ -1,10 +1,10 @@
 import ModalCreateUser from "./ModalCreateUser";
 import ModalUpdateUser from './ModalUpdateUser';
 import ModalViewUser from "./ModalViewUser";
-import {FcPlus} from 'react-icons/fc';
+import { FcPlus } from 'react-icons/fc';
 import TableUser from "./TableUser";
 import { useEffect, useState } from "react";
-import {getAllUsers} from '../../../services/apiService'
+import { getAllUsers } from '../../../services/apiService'
 import ModalDeleteUser from "./ModalDeleteUser";
 
 const ManagerUser = (props) => {
@@ -92,6 +92,7 @@ const ManagerUser = (props) => {
                     show={showModalDeleteUser} 
                     setShow={setModalDeleteUser}
                     dataDelete={dataDelete}
+                    fetchListUser={fetchListUser}
                 />
             </div>
         </div>
