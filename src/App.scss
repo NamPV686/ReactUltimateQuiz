@@ -17,6 +17,12 @@ body {
       padding: 0 15px;
       border: 1 px solid #535353;
       height: 40px;
+
+      &:hover{
+        background: #353333;
+        color: white
+        
+      }
     }
 
     .btn-signup{
