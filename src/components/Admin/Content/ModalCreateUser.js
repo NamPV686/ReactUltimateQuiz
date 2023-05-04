@@ -7,7 +7,7 @@ import {postCreateNewUser} from '../../../services/apiService'
 import './ManageUser.scss'
 
 const ModalCreateUser = (props) => {
-  const {show, setShow} = props;
+  const {show, setShow, setCurrentPage, fetchListUserWithPaginate} = props;
 
   const handleClose = () => {
     setShow(false);
@@ -63,7 +63,8 @@ const ModalCreateUser = (props) => {
     if(data && data.EC === 0){
       toast.success(data.EM);
       handleClose();
-      await props.fetchListUser();
+      setCurrentPage(1);
+      await fetchListUserWithPaginate(1);
     }
 
     if(data && data.EC !== 0){

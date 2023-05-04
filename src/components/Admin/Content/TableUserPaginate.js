@@ -2,7 +2,7 @@ import ReactPaginate from "react-paginate";
 import { useState, useEffect } from "react";
 
 const TableUserPaginate = (props) => {
-    const {listUser, fetchListUserWithPaginate, pageCount} = props;
+    const {listUser, fetchListUserWithPaginate, pageCount, currentPage} = props;
 
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
@@ -81,6 +81,7 @@ const TableUserPaginate = (props) => {
                     containerClassName="pagination"
                     activeClassName="active"
                     renderOnZeroPageCount={null}
+                    forcePage={+currentPage - 1}
                 />
             </div>
         </>

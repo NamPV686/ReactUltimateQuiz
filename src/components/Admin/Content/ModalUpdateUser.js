@@ -8,7 +8,7 @@ import _ from 'lodash';
 import './ManageUser.scss'
 
 const ModalUpdateUser = (props) => {
-  const {show, setShow, dataUpdate, resetUpdateData} = props;
+  const {show, setShow, dataUpdate, resetUpdateData, currentPage, fetchListUserWithPaginate} = props;
 
   const handleClose = () => {
     setShow(false);
@@ -50,13 +50,14 @@ const ModalUpdateUser = (props) => {
   }
 
   const handleSubmitUpdate = async() => {
+    console.log(currentPage);
     //Call API
     let data = await putUpdateUser(dataUpdate.id, username, role, image);
 
     if(data && data.EC === 0){
       toast.success(data.EM);
       handleClose();
-      await props.fetchListUser();
+      await fetchListUserWithPaginate(currentPage);
     }
 
     if(data && data.EC !== 0){
