@@ -1,18 +1,52 @@
 import { useState } from 'react';
-import './Login.scss'
+import './Login.scss';
+import { AiOutlineArrowLeft } from 'react-icons/ai';
+import { postLogin } from '../../services/apiService';
+import {toast } from 'react-toastify';
+import {NavLink, useNavigate} from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
-    const handleLogin = () => {
-        alert("Login");
+    const handleLogin = async() => {
+        //Validate
+        const validateEmail = (email) => {
+            return String(email)
+              .toLowerCase()
+              .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+              );
+          };
+      
+          const isValidEmail = validateEmail(email);
+      
+          if(!isValidEmail){
+            toast.error("Invalid email")
+            return;
+          }
+
+        //Call API
+        let data = await postLogin(email, password);
+
+        if(data && +data.EC === 0){
+            toast.success(data.EM);
+            navigate('/');
+        }
+      
+        if(data && +data.EC !== 0){
+        toast.error(data.EM);
+        }
+
+        console.log(data);
     }
 
     return(
         <div className="login-container">
             <div className='header'>
-                Don't have an account yet?
+                <span>Don't have an account yet?</span>
+                <button>SignUp</button>
             </div>
             <div className='title col-4 mx-auto'>
                 Quiz
@@ -40,8 +74,13 @@ const Login = () => {
                     />
                 </div>
                 <span>Forgot password</span>
-                <div className='align-center'>
+                <div>
                     <button onClick={() => handleLogin()}>Login To Quiz</button>
+                </div>
+                <div className='back'>
+                    <span onClick={() => navigate("/")}>
+                        <AiOutlineArrowLeft /><AiOutlineArrowLeft />Go to HomePage
+                    </span>
                 </div>
             </div>
         </div>
