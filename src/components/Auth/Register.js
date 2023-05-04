@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import './Login.scss';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
-import { postLogin } from '../../services/apiService';
+import { AiOutlineEye } from 'react-icons/ai';
+import { postSignUp } from '../../services/apiService';
 import {toast } from 'react-toastify';
-import {NavLink, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-const Login = () => {
+const Register = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
     const navigate = useNavigate();
 
-    const handleLogin = async() => {
+    const handleSignUp = async() => {
         //Validate
         const validateEmail = (email) => {
             return String(email)
@@ -27,12 +29,17 @@ const Login = () => {
             return;
           }
 
+          if(!password){
+            toast.error("Invalid password")
+            return;
+          }
+
         //Call API
-        let data = await postLogin(email, password);
+        let data = await postSignUp(email, password, username);
 
         if(data && +data.EC === 0){
             toast.success(data.EM);
-            navigate('/');
+            navigate('/login');
         }
       
         if(data && +data.EC !== 0){
@@ -43,14 +50,14 @@ const Login = () => {
     return(
         <div className="login-container">
             <div className='header'>
-                <span>Don't have an account yet?</span>
-                <button onClick={() => navigate("/register")}>SignUp</button>
+                <span>Already have an account?</span>
+                <button onClick={() => navigate("/login")}>Login</button>
             </div>
             <div className='title col-4 mx-auto'>
                 Quiz
             </div>
             <div className='welcome col-4 mx-auto'>
-                Hello who's this?
+                Start your journey?
             </div>
             <div className='content-form col-4 mx-auto'>
                 <div className='form-group'>
@@ -63,7 +70,7 @@ const Login = () => {
                     />
                 </div>
                 <div className='form-group'>
-                    <label>Password</label>
+                    <label><AiOutlineEye />Password</label>
                     <input
                         type={'password'}
                         className='form-control'
@@ -71,9 +78,17 @@ const Login = () => {
                         onChange={(event) => setPassword(event.target.value)}
                     />
                 </div>
-                <span>Forgot password</span>
+                <div className='form-group'>
+                    <label>Username</label>
+                    <input
+                        type={'text'} 
+                        className='form-control' 
+                        value={username}
+                        onChange={(event) => setUsername(event.target.value)}
+                    />
+                </div>
                 <div>
-                    <button onClick={() => handleLogin()}>Login To Quiz</button>
+                    <button onClick={() => handleSignUp()}>Create my free account</button>
                 </div>
                 <div className='back'>
                     <span onClick={() => navigate("/")}>
@@ -85,4 +100,4 @@ const Login = () => {
     );
 }
 
-export default Login;
+export default Register;
