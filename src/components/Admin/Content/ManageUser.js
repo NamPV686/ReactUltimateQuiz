@@ -5,6 +5,7 @@ import {FcPlus} from 'react-icons/fc';
 import TableUser from "./TableUser";
 import { useEffect, useState } from "react";
 import {getAllUsers} from '../../../services/apiService'
+import ModalDeleteUser from "./ModalDeleteUser";
 
 const ManagerUser = (props) => {
 
@@ -13,6 +14,8 @@ const ManagerUser = (props) => {
     const [dataUpdate, setDataUpdate] = useState({});
     const [showModalViewUser, setModalViewUser] = useState(false);
     const [dataView, setDataView] = useState({});
+    const [showModalDeleteUser, setModalDeleteUser] = useState(false);
+    const [dataDelete, setDataDelete] = useState({});
 
     const [listUser, setListUser] = useState([]);
 
@@ -43,6 +46,11 @@ const ManagerUser = (props) => {
         setDataView(user);
     }
 
+    const handleClickBtnDelete = (user) => {
+        setModalDeleteUser(true);
+        setDataDelete(user);
+    }
+
     return(
         <div className="manager-user-container">
             <div className="title">
@@ -57,6 +65,7 @@ const ManagerUser = (props) => {
                         listUser={listUser}
                         handleClickBtnUpdate={handleClickBtnUpdate}
                         handleClickBtnView={handleClickBtnView}
+                        handleClickBtnDelete={handleClickBtnDelete}
                     />
                 </div>
                 <ModalCreateUser 
@@ -77,6 +86,12 @@ const ManagerUser = (props) => {
                     dataView={dataView}
                     fetchListUser={fetchListUser}
                     resetUpdateData={resetUpdateData}
+                />
+
+                <ModalDeleteUser 
+                    show={showModalDeleteUser} 
+                    setShow={setModalDeleteUser}
+                    dataDelete={dataDelete}
                 />
             </div>
         </div>
