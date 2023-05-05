@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import './Login.scss';
+import './Register.scss';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
-import { AiOutlineEye } from 'react-icons/ai';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { postSignUp } from '../../services/apiService';
 import {toast } from 'react-toastify';
 import {useNavigate} from 'react-router-dom';
@@ -10,6 +11,9 @@ const Register = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
+
+    const [ isShowHidePassword, setShowHidePassword ] = useState(false);
+
     const navigate = useNavigate();
 
     const handleSignUp = async() => {
@@ -48,7 +52,7 @@ const Register = () => {
     }
 
     return(
-        <div className="login-container">
+        <div className="register-container">
             <div className='header'>
                 <span>Already have an account?</span>
                 <button onClick={() => navigate("/login")}>Login</button>
@@ -61,7 +65,7 @@ const Register = () => {
             </div>
             <div className='content-form col-4 mx-auto'>
                 <div className='form-group'>
-                    <label>Email</label>
+                    <label>Email (*)</label>
                     <input
                         type={'email'} 
                         className='form-control' 
@@ -69,14 +73,21 @@ const Register = () => {
                         onChange={(event) => setEmail(event.target.value)}
                     />
                 </div>
-                <div className='form-group'>
-                    <label><AiOutlineEye />Password</label>
+                <div className='form-group password'>
+                    <label>Password (*)</label>
                     <input
-                        type={'password'}
+                        type={isShowHidePassword ? 'text' : 'password'}
                         className='form-control'
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                     />
+                    {
+                        isShowHidePassword
+                        ?
+                        <span className='eye' onClick={() => setShowHidePassword(false)}><AiOutlineEye /></span>
+                        :
+                        <span className='eye' onClick={() => setShowHidePassword(true)}><AiOutlineEyeInvisible /></span>
+                    }
                 </div>
                 <div className='form-group'>
                     <label>Username</label>
