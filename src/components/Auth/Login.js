@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './Login.scss';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
+import { FaSpinner } from 'react-icons/fa';
 import { postLogin } from '../../services/apiService';
 import {toast } from 'react-toastify';
 import {NavLink, useNavigate} from 'react-router-dom';
@@ -12,23 +13,26 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = async() => {
         //Validate
         const validateEmail = (email) => {
             return String(email)
-              .toLowerCase()
-              .match(
+                .toLowerCase()
+                .match(
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-              );
-          };
-      
-          const isValidEmail = validateEmail(email);
-      
-          if(!isValidEmail){
+                );
+            };
+    
+        const isValidEmail = validateEmail(email);
+    
+        if(!isValidEmail){
             toast.error("Invalid email")
             return;
-          }
+        }
+
+        setIsLoading(true);
 
         //Call API
         let data = await postLogin(email, password);
@@ -36,11 +40,13 @@ const Login = () => {
         if(data && +data.EC === 0){
             dispatch(doLogin(data));
             toast.success(data.EM);
+            setIsLoading(false);
             navigate('/');
         }
       
         if(data && +data.EC !== 0){
             toast.error(data.EM);
+            setIsLoading(false);
         }
     }
 
@@ -77,7 +83,12 @@ const Login = () => {
                 </div>
                 <span>Forgot password</span>
                 <div>
-                    <button onClick={() => handleLogin()}>Login To Quiz</button>
+                    <button onClick={() => handleLogin()} 
+                        disabled = {isLoading}
+                    >
+                        { isLoading === true && <FaSpinner className='loader-icon'/> }
+                        <span>Login To Quiz</span>
+                    </button>
                 </div>
                 <div className='back'>
                     <span onClick={() => navigate("/")}>
