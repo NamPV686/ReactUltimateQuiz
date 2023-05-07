@@ -1,4 +1,13 @@
 .list-quiz-container{
     display: flex;
     gap: 50px;
+
+    img{
+        height: 200px;
+    }
+
+    .card-content{
+        height: 100px;
+        margin: 20px 0;
+    }
 }

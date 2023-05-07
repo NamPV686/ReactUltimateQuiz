@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import App from './App';
-import User from './components/User/User';
+import DetailQuiz from './components/User/DetailQuiz';
 import Admin from './components/Admin/Admin';
 import HomePage from './components/Home/HomePage';
 import DashBoard from './components/Admin/Content/DashBoard';
@@ -10,6 +10,14 @@ import { ToastContainer } from 'react-toastify';
 import Register from "./components/Auth/Register";
 import ListQuiz from "./components/User/ListQuiz";
 
+const NotFound = () => {
+    return (
+        <div className="alert alert-danger container mt-3">
+            404. Not found data with your current URL
+        </div>
+    );
+}
+
 const Layout = () => {
     return(
         <>
@@ -18,12 +26,14 @@ const Layout = () => {
                 <Route index element = {<HomePage />} />
                 <Route path='users' element = {<ListQuiz />} />
             </Route>
+            <Route path='quiz/:id' element = {<DetailQuiz />} />
             <Route path='admins' element = {<Admin />} >
                 <Route index element = {<DashBoard />} />
                 <Route path='manageruser' element = {<ManageUser />} />
             </Route>
             <Route path='login' element = {<Login />} />
             <Route path='register' element = {<Register />} />
+            <Route path='*' element = {<NotFound />} />
             </Routes>
             <ToastContainer
                 position="top-right"
