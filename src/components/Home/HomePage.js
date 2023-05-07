@@ -1,10 +1,11 @@
 import videoHomepage from '../../assets/video-homepage.mp4'
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 const HomePage = (props) => {
     const account = useSelector(state => state.user.account);
     const isAuthenticated = useSelector(state => state.user.isAuthenticated);
-    console.log("account: ", account, "isAuthenticated: ", isAuthenticated)
+    const navigate = useNavigate();
 
     return (
         <div className="homepage-container">
@@ -19,7 +20,13 @@ const HomePage = (props) => {
                     <p>You don't want to make a boring form. And your audience won't answer one. Create a typeform instead—and make everyone happy.</p>
                 </div>
                 <div>
-                    <button className='btn-signup'>Get started - it's free</button>
+                    {
+                        isAuthenticated === false ?
+                        <button className='btn-signup' onClick={() => navigate('/login')}>Get started - it's free</button>
+                        :
+                        <button className='btn-signup' onClick={() => navigate('/users')}>Doing quiz now</button>
+
+                    }
                 </div>
             </div>
         </div>
