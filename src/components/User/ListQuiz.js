@@ -12,7 +12,7 @@ const ListQuiz = () => {
     }, []);
 
     const getQuizData = async() => {
-        const res = await getQuizByUser();
+        let res = await getQuizByUser();
         setArrQuiz(res.DT);
     }
 
@@ -22,7 +22,7 @@ const ListQuiz = () => {
                  arrQuiz && arrQuiz.length > 0 &&
                  arrQuiz.map((quiz, index) => {
                     return (
-                        <div className="card" style={{width: "18rem"}}>
+                        <div className="card" style={{width: "18rem"}} key={`quiz-${index}`}>
                             <img src={`data:image/jpeg;base64,${quiz.image}`} className="card-img-top" alt="..."/>
                             <div className="card-body">
                                 <div className="card-content">
