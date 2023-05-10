@@ -1,34 +1,21 @@
 import { useEffect } from "react";
 import { useParams, useLocation } from "react-router";
-import { getDataQuiz } from '../../services/apiService';
+import { getDataQuiz, postSubmitQuiz } from '../../services/apiService';
 import _ from "lodash";
 import './DetailQuiz.scss';
 import { useState } from "react";
 import Question from "./Question";
+import ModalResult from "./ModalResult";
 
 const DetailQuiz = (props) => {
     const params = useParams();
     const quizId = params.id;
     const [ dataQuiz, setDataQuiz ] = useState([]);
     const [ index, setIndex ] = useState(0);
-    const [ test, setTest] = useState(
-        {
-            "quizId": 1,
-            "answers": [
-                { 
-                    "questionId": 1,
-                    "userAnswerId": [3]
-                },
-                { 
-                    "questionId": 2,
-                    "userAnswerId": [6]
-                }
-            ]
-        }
-    );
-
     const location = useLocation();
     const title = location?.state?.quizTitle;
+    const [ isShowModalResult, setIsShowModalResult ] = useState(false);
+    const [ dataModalResult, setDataModalResult] = useState({});
 
     useEffect(() => {
         fetchQuestions();
@@ -99,8 +86,7 @@ const DetailQuiz = (props) => {
         }
     }
 
-    const handleFinish = () => {
-        // console.log("DataQuiz: ", dataQuiz,"test: ", test);
+    const handleFinish = async() => {
         let payload = {
             quizId: +quizId,
             answers: []
@@ -123,8 +109,24 @@ const DetailQuiz = (props) => {
                     userAnswerId: userAnswerId
                 })
             })
+
             payload.answers = answers;
-            console.log("Payload: ", payload)
+
+            //Submit API
+            let res = await postSubmitQuiz(payload);
+
+            if(res && res.EC === 0){
+                setDataModalResult({
+                    countCorrect: res.DT.countCorrect,
+                    countTotal: res.DT.countTotal,
+                    quizData: res.DT.quizData
+                });
+                setIsShowModalResult(true);
+            } else{
+                alert("Something wrongs...")
+            }
+
+            console.log("postSubmitQuiz: ", res)
         }
     }
 
@@ -154,6 +156,11 @@ const DetailQuiz = (props) => {
             <div className="right-content">
                 right-content
             </div>
+            <ModalResult 
+                show={isShowModalResult} 
+                setShow={setIsShowModalResult}
+                dataModalResult={dataModalResult}
+            />
         </div>
     );
 }
