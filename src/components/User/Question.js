@@ -2,13 +2,13 @@ import _ from "lodash";
 
 const Question = (props) => {
     const { data, index, handleCheckbox } = props;
-    console.log("Res: ",data);
+    
     if(_.isEmpty(data)){
         return(<></>)
     }
 
     const handleAnswersCheckbox = (event, aId, qId) => {
-        let res = handleCheckbox(aId, qId);
+        handleCheckbox(aId, qId);
     }
 
     return(

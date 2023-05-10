@@ -11,6 +11,21 @@ const DetailQuiz = (props) => {
     const quizId = params.id;
     const [ dataQuiz, setDataQuiz ] = useState([]);
     const [ index, setIndex ] = useState(0);
+    const [ test, setTest] = useState(
+        {
+            "quizId": 1,
+            "answers": [
+                { 
+                    "questionId": 1,
+                    "userAnswerId": [3]
+                },
+                { 
+                    "questionId": 2,
+                    "userAnswerId": [6]
+                }
+            ]
+        }
+    );
 
     const location = useLocation();
     const title = location?.state?.quizTitle;
@@ -84,6 +99,35 @@ const DetailQuiz = (props) => {
         }
     }
 
+    const handleFinish = () => {
+        // console.log("DataQuiz: ", dataQuiz,"test: ", test);
+        let payload = {
+            quizId: +quizId,
+            answers: []
+        }
+
+        let answers = [];
+        if(dataQuiz && dataQuiz.length > 0){
+            dataQuiz.forEach((question) => {
+                let questionId = question.questionId;
+                let userAnswerId = [];
+
+                question.answers.forEach((a) => {
+                    if(a.isSelected === true){
+                        userAnswerId.push(a.id);
+                    }
+                })
+
+                answers.push({
+                    questionId: +questionId,
+                    userAnswerId: userAnswerId
+                })
+            })
+            payload.answers = answers;
+            console.log("Payload: ", payload)
+        }
+    }
+
     return (
         <div className="detail-quiz-container">
             <div className="left-content">
@@ -104,7 +148,7 @@ const DetailQuiz = (props) => {
                 <div className="footer">
                     <button className="btn btn-secondary mr-3"  onClick={() => handlePrev()}>Prev</button>
                     <button className="btn btn-primary" onClick={() => handleNext() }>Next</button>
-                    <button className="btn btn-warning" >Finish</button>
+                    <button className="btn btn-warning" onClick={() => handleFinish() }>Finish</button>
                 </div>
             </div>
             <div className="right-content">
