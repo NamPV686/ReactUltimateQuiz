@@ -32,17 +32,19 @@ const DetailQuiz = (props) => {
             .map((value, key) => {
                 let answers = [];
                 let questionDescription, image = null;
+                let isSelected = false;
 
                 value.forEach((item, index) => {
                     if(index === 0){
                         questionDescription = item.description;
                         image = item.image;
                     }
+                    item.answers.isSelected = false;
                     answers.push(item.answers);
                 });
 
                 return(
-                    { questionId: key, answers: answers, questionDescription, image }
+                    { questionId: key, answers: answers, questionDescription, image}
                 )
             })
             .value();
@@ -62,6 +64,26 @@ const DetailQuiz = (props) => {
         }
     }
 
+    const handleCheckbox = (answerId, questionId) => {
+        let dataQuizClone = _.cloneDeep(dataQuiz);
+        let question = dataQuizClone.find(item => +item.questionId === +questionId);
+
+        if(question && question.answers){
+            let b = question.answers.map((item) => {
+                if(+item.id === +answerId){
+                    item.isSelected = !item.isSelected;
+                }
+                return item;
+            })
+            question.answers = b;
+        }
+        let index = dataQuizClone.findIndex(item => +item.questionId === +questionId);
+        if(index > -1){
+            dataQuizClone[index] = question;
+            setDataQuiz(dataQuizClone);
+        }
+    }
+
     return (
         <div className="detail-quiz-container">
             <div className="left-content">
@@ -76,11 +98,13 @@ const DetailQuiz = (props) => {
                     <Question 
                         data={dataQuiz && dataQuiz.length > 0 ? dataQuiz[index] : [] } 
                         index={index}
+                        handleCheckbox={handleCheckbox}
                     />
                 </div>
                 <div className="footer">
                     <button className="btn btn-secondary mr-3"  onClick={() => handlePrev()}>Prev</button>
                     <button className="btn btn-primary" onClick={() => handleNext() }>Next</button>
+                    <button className="btn btn-warning" >Finish</button>
                 </div>
             </div>
             <div className="right-content">
