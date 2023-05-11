@@ -1,8 +1,13 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './ManageQuiz.scss';
 import Select from 'react-select';
 import { postCreateNewQuiz } from '../../../../services/apiService';
 import {toast } from 'react-toastify';
+import TableQuiz from './TableQuiz';
+import Accordion from 'react-bootstrap/Accordion';
+
+import { getAllQuizForAdmin } from "../../../../services/apiService";
+import ModalDeleteQuiz from './ModalDeleteQuiz';
 
 const ManageQuiz = () => {
     const options = [
@@ -16,6 +21,21 @@ const ManageQuiz = () => {
     const [difficulty, setDifficulty] = useState("");
     const [image, setImage] = useState(null);
     const imageRef = useRef(null);
+    const [showModalDeleteQuiz, setShowModalDeleteQuiz] = useState(false);
+
+    const [dataDelete, setDataDelete] = useState({});
+    const [ listQuiz, setListQuiz ] = useState([]);
+
+    useEffect(() => {
+        fetchQuiz();
+    },[]);
+
+    const fetchQuiz = async() => {
+        let res = await getAllQuizForAdmin();
+        if(res && res.EC === 0){
+            setListQuiz(res.DT);
+        }
+    }
 
     const handleUploadFile = (event) => {
         if(event.target && event.target.files && event.target.files[0]){
@@ -34,6 +54,7 @@ const ManageQuiz = () => {
 
         if(res && res.EC === 0){
             toast.success(res.EM);
+            fetchQuiz();
 
             setName("");
             setDescription("");
@@ -45,65 +66,82 @@ const ManageQuiz = () => {
           }
     }
 
+    const handleClickBtnDelete = (quiz) => {
+        setShowModalDeleteQuiz(true);
+        setDataDelete(quiz);
+    }
+
     return (
         <div className="quiz-container">
-            <div className="title">
-                Manage Quizzes
+            <Accordion defaultActiveKey="0" flush>
+                <Accordion.Item eventKey="0">
+                    <Accordion.Header className="title">Manage Quizzes</Accordion.Header>
+                    <Accordion.Body>
+                        <div className="add-new">
+                            <fieldset className="border rounded-3 p-3">
+                                <legend className="float-none w-auto px-3">Add New Quiz</legend>
+                                <div className="form-floating mb-3">
+                                    <input 
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="Name" 
+                                        value={name}
+                                        onChange={(event) => setName(event.target.value)}
+                                    />
+                                    <label>Name</label>
+                                </div>
+                                <div className="form-floating mb-3">
+                                    <input 
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="Description" 
+                                        value={description}
+                                        onChange={(event) => setDescription(event.target.value)}
+                                    />
+                                    <label>Description</label>
+                                </div>
+                                <div className='mt-3'>
+                                    <Select
+                                        defaultValue={difficulty}
+                                        onChange={setDifficulty}
+                                        options={options}
+                                        placeholder={"Quiz type..."}
+                                    />
+                                </div>
+                                <div className="more-actions mt-3">
+                                    <label className='mb-2'>Upload Image</label>
+                                    <input 
+                                        type="file" 
+                                        ref={imageRef}
+                                        className="form-control" 
+                                        onChange={(event) => handleUploadFile(event)}
+                                    />
+                                </div>
+                                <div className='mt-3'>
+                                    <button 
+                                        className='btn btn-warning'
+                                        onClick={() => handleSubmitQuiz()}
+                                    >
+                                        Save
+                                    </button>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </Accordion.Body>
+                </Accordion.Item>
+            </Accordion>
+            <div className="list-detail mt-3">
+                <TableQuiz 
+                    listQuiz={listQuiz}
+                    handleClickBtnDelete={handleClickBtnDelete}
+                />
             </div>
-            <hr />
-            <div className="add-new">
-                <fieldset className="border rounded-3 p-3">
-                    <legend className="float-none w-auto px-3">Add New Quiz</legend>
-                    <div className="form-floating mb-3">
-                        <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder="Name" 
-                            value={name}
-                            onChange={(event) => setName(event.target.value)}
-                        />
-                        <label>Name</label>
-                    </div>
-                    <div className="form-floating mb-3">
-                        <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder="Description" 
-                            value={description}
-                            onChange={(event) => setDescription(event.target.value)}
-                        />
-                        <label>Description</label>
-                    </div>
-                    <div className='mt-3'>
-                        <Select
-                            defaultValue={difficulty}
-                            onChange={setDifficulty}
-                            options={options}
-                            placeholder={"Quiz type..."}
-                        />
-                    </div>
-                    <div className="more-actions mt-3">
-                        <label className='mb-2'>Upload Image</label>
-                        <input 
-                            type="file" 
-                            ref={imageRef}
-                            className="form-control" 
-                            onChange={(event) => handleUploadFile(event)}
-                         />
-                    </div>
-                    <div className='mt-3'>
-                        <button 
-                            className='btn btn-warning'
-                            onClick={() => handleSubmitQuiz()}
-                        >
-                            Save
-                        </button>
-                    </div>
-                </fieldset>
-            </div>
-            <div className="list-detail">
-                Table
-            </div>
+            <ModalDeleteQuiz
+                show={showModalDeleteQuiz} 
+                setShow={setShowModalDeleteQuiz}
+                dataDelete={dataDelete}
+                fetchQuiz={fetchQuiz}
+            />
         </div>
     )
 }
