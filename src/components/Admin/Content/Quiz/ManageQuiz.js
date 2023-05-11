@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './ManageQuiz.scss';
 import Select from 'react-select';
+import { postCreateNewQuiz } from '../../../../services/apiService';
+import {toast } from 'react-toastify';
 
 const ManageQuiz = () => {
     const options = [
@@ -12,11 +14,35 @@ const ManageQuiz = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [difficulty, setDifficulty] = useState("");
-    const [type, setType] = useState("EASY");
     const [image, setImage] = useState(null);
+    const imageRef = useRef(null);
 
-    const handleUploadFile = () => {
+    const handleUploadFile = (event) => {
+        if(event.target && event.target.files && event.target.files[0]){
+            // setPreviewImage(URL.createObjectURL(event.target.files[0]));
+            setImage(event.target.files[0]);
+          }
+    }
 
+    const handleSubmitQuiz = async() => {
+        if(!description || !name){
+            toast.error("Name or Description is empty");
+            return;
+        }
+
+        let res = await postCreateNewQuiz(description, name, difficulty?.value, image);
+
+        if(res && res.EC === 0){
+            toast.success(res.EM);
+
+            setName("");
+            setDescription("");
+            imageRef.current.value = null;
+          }
+      
+          if(res && res.EC !== 0){
+            toast.error(res.EM);
+          }
     }
 
     return (
@@ -28,52 +54,50 @@ const ManageQuiz = () => {
             <div className="add-new">
                 <fieldset className="border rounded-3 p-3">
                     <legend className="float-none w-auto px-3">Add New Quiz</legend>
-                    <div class="form-floating mb-3">
+                    <div className="form-floating mb-3">
                         <input 
                             type="text" 
-                            class="form-control" 
+                            className="form-control" 
                             placeholder="Name" 
                             value={name}
                             onChange={(event) => setName(event.target.value)}
                         />
-                        <label for="floatingInput">Name</label>
+                        <label>Name</label>
                     </div>
-                    <div class="form-floating mb-3">
+                    <div className="form-floating mb-3">
                         <input 
                             type="text" 
-                            class="form-control" 
+                            className="form-control" 
                             placeholder="Description" 
                             value={description}
                             onChange={(event) => setDescription(event.target.value)}
                         />
                         <label>Description</label>
                     </div>
-                    <div class="form-floating mb-3">
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            placeholder="Difficulty" 
-                            value={difficulty}
-                            onChange={(event) => setDifficulty(event.target.value)}
-                        />
-                        <label>Difficulty</label>
-                    </div>
                     <div className='mt-3'>
                         <Select
-                            // value={selectedOption}
-                            // onChange={this.handleChange}
+                            defaultValue={difficulty}
+                            onChange={setDifficulty}
                             options={options}
                             placeholder={"Quiz type..."}
                         />
                     </div>
-                    <div class="more-actions mt-3">
-                        <label>Upload Image</label>
+                    <div className="more-actions mt-3">
+                        <label className='mb-2'>Upload Image</label>
                         <input 
                             type="file" 
-                            class="form-control mt-2"
-                            value={image}
-                            onChange={(event) => handleUploadFile(event.target.value)}
+                            ref={imageRef}
+                            className="form-control" 
+                            onChange={(event) => handleUploadFile(event)}
                          />
+                    </div>
+                    <div className='mt-3'>
+                        <button 
+                            className='btn btn-warning'
+                            onClick={() => handleSubmitQuiz()}
+                        >
+                            Save
+                        </button>
                     </div>
                 </fieldset>
             </div>
