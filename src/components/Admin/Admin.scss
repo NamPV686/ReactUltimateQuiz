@@ -12,4 +12,8 @@
             height: 40px;
         }
     }
+
+    .admin-main{
+        height: calc(100vh - 40px);
+    }
 }
