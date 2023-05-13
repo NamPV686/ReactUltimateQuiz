@@ -1,6 +1,6 @@
 
 const TableQuiz = (props) => {
-    const {listQuiz, handleClickBtnDelete} = props;
+    const {listQuiz, handleClickBtnDelete, handleClickBtnUpdate} = props;
 
     return (
         <div className="table-container">
@@ -33,7 +33,7 @@ const TableQuiz = (props) => {
                                         </button>
                                         <button 
                                             className="btn btn-warning mx-2"
-                                            // onClick={() => handleClickBtnUpdate()}
+                                            onClick={() => handleClickBtnUpdate(quiz)}
                                         >
                                             Update
                                         </button>

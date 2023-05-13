@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import './ManageQuiz.scss';
 import Select from 'react-select';
-import { postCreateNewQuiz } from '../../../../services/apiService';
+import { postCreateNewQuiz, getAllQuizForAdmin } from '../../../../services/apiService';
 import {toast } from 'react-toastify';
 import TableQuiz from './TableQuiz';
 import Accordion from 'react-bootstrap/Accordion';
-
-import { getAllQuizForAdmin } from "../../../../services/apiService";
 import ModalDeleteQuiz from './ModalDeleteQuiz';
+import ModalUpdateQuiz from './ModalUpdateQuiz';
 
 const ManageQuiz = () => {
     const options = [
@@ -16,15 +15,17 @@ const ManageQuiz = () => {
         { value: 'HARD', label: 'HARD' },
       ];
 
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [difficulty, setDifficulty] = useState("");
-    const [image, setImage] = useState(null);
+    const [ name, setName ] = useState("");
+    const [ description, setDescription ] = useState("");
+    const [ difficulty, setDifficulty ] = useState("");
+    const [ image, setImage ] = useState(null);
     const imageRef = useRef(null);
-    const [showModalDeleteQuiz, setShowModalDeleteQuiz] = useState(false);
-
-    const [dataDelete, setDataDelete] = useState({});
+    const [ showModalDeleteQuiz, setShowModalDeleteQuiz ] = useState(false);
+    const [ showModalUpdateQuiz, setShowModalUpdateQuiz ] = useState(false);
+    const [ previewImage, setPreviewImage ] = useState("");
+    const [ dataDelete, setDataDelete ] = useState({});
     const [ listQuiz, setListQuiz ] = useState([]);
+    const [ dataUpdateQuiz, setDataUpdateQuiz ] = useState({});
 
     useEffect(() => {
         fetchQuiz();
@@ -39,7 +40,7 @@ const ManageQuiz = () => {
 
     const handleUploadFile = (event) => {
         if(event.target && event.target.files && event.target.files[0]){
-            // setPreviewImage(URL.createObjectURL(event.target.files[0]));
+            setPreviewImage(URL.createObjectURL(event.target.files[0]));
             setImage(event.target.files[0]);
           }
     }
@@ -58,6 +59,7 @@ const ManageQuiz = () => {
 
             setName("");
             setDescription("");
+            setPreviewImage("");
             imageRef.current.value = null;
           }
       
@@ -69,6 +71,15 @@ const ManageQuiz = () => {
     const handleClickBtnDelete = (quiz) => {
         setShowModalDeleteQuiz(true);
         setDataDelete(quiz);
+    }
+
+    const handleClickBtnUpdate = (quiz) => {
+        setShowModalUpdateQuiz(true);
+        setDataUpdateQuiz(quiz);
+    }
+
+    const resetUpdateData = () => {
+        setDataUpdateQuiz("");
     }
 
     return (
@@ -117,6 +128,15 @@ const ManageQuiz = () => {
                                         onChange={(event) => handleUploadFile(event)}
                                     />
                                 </div>
+                                <div className='col-md-12 mt-3 img-preview'>
+                                    {
+                                    previewImage
+                                    ?
+                                    <img src={previewImage} />
+                                    :
+                                    <span>preview image</span>
+                                    }
+                                </div>
                                 <div className='mt-3'>
                                     <button 
                                         className='btn btn-warning'
@@ -134,6 +154,7 @@ const ManageQuiz = () => {
                 <TableQuiz 
                     listQuiz={listQuiz}
                     handleClickBtnDelete={handleClickBtnDelete}
+                    handleClickBtnUpdate={handleClickBtnUpdate}
                 />
             </div>
             <ModalDeleteQuiz
@@ -141,6 +162,13 @@ const ManageQuiz = () => {
                 setShow={setShowModalDeleteQuiz}
                 dataDelete={dataDelete}
                 fetchQuiz={fetchQuiz}
+            />
+            <ModalUpdateQuiz 
+                show={showModalUpdateQuiz} 
+                setShow={setShowModalUpdateQuiz}
+                dataUpdateQuiz={dataUpdateQuiz}
+                fetchQuiz={fetchQuiz}
+                resetUpdateData={resetUpdateData}
             />
         </div>
     )
