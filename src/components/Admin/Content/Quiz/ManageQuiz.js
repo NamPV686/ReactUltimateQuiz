@@ -7,6 +7,7 @@ import TableQuiz from './TableQuiz';
 import Accordion from 'react-bootstrap/Accordion';
 import ModalDeleteQuiz from './ModalDeleteQuiz';
 import ModalUpdateQuiz from './ModalUpdateQuiz';
+import ModalViewQuiz from './ModalViewQuiz';
 
 const ManageQuiz = () => {
     const options = [
@@ -26,6 +27,8 @@ const ManageQuiz = () => {
     const [ dataDelete, setDataDelete ] = useState({});
     const [ listQuiz, setListQuiz ] = useState([]);
     const [ dataUpdateQuiz, setDataUpdateQuiz ] = useState({});
+    const [ showModalViewQuiz, setShowModalViewQuiz ] = useState(false);
+    const [ dataViewQuiz, setDataViewQuiz ] = useState({});
 
     useEffect(() => {
         fetchQuiz();
@@ -80,6 +83,11 @@ const ManageQuiz = () => {
 
     const resetUpdateData = () => {
         setDataUpdateQuiz("");
+    }
+
+    const handleClickBtnView = (quiz) => {
+        setShowModalViewQuiz(true);
+        setDataViewQuiz(quiz);
     }
 
     return (
@@ -155,6 +163,7 @@ const ManageQuiz = () => {
                     listQuiz={listQuiz}
                     handleClickBtnDelete={handleClickBtnDelete}
                     handleClickBtnUpdate={handleClickBtnUpdate}
+                    handleClickBtnView={handleClickBtnView}
                 />
             </div>
             <ModalDeleteQuiz
@@ -169,6 +178,11 @@ const ManageQuiz = () => {
                 dataUpdateQuiz={dataUpdateQuiz}
                 fetchQuiz={fetchQuiz}
                 resetUpdateData={resetUpdateData}
+            />
+            <ModalViewQuiz 
+                show={showModalViewQuiz} 
+                setShow={setShowModalViewQuiz}
+                dataViewQuiz={dataViewQuiz}
             />
         </div>
     )

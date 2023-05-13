@@ -1,6 +1,6 @@
 
 const TableQuiz = (props) => {
-    const {listQuiz, handleClickBtnDelete, handleClickBtnUpdate} = props;
+    const {listQuiz, handleClickBtnDelete, handleClickBtnUpdate, handleClickBtnView} = props;
 
     return (
         <div className="table-container">
@@ -27,7 +27,7 @@ const TableQuiz = (props) => {
                                     <td>{quiz.difficulty}</td>
                                     <td>
                                     <button className="btn btn-info"
-                                            // onClick={() => handleClickBtnView()}
+                                            onClick={() => handleClickBtnView(quiz)}
                                         >
                                             View
                                         </button>
