@@ -50,7 +50,7 @@ const SideBar = (props) => {
                         <SubMenu icon={<FaGem />} title="Chức năng">
                             <MenuItem><Link to='/admins/manage-users' />Quản lý Users</MenuItem>
                             <MenuItem><Link to='/admins/manage-quizzes' />Quản lý Bài Quiz</MenuItem>
-                            <MenuItem> Quản lý Câu Hỏi</MenuItem>
+                            <MenuItem><Link to='/admins/manage-questions' />Quản lý Câu Hỏi</MenuItem>
                         </SubMenu>
                     </Menu>
                 </SidebarContent>
