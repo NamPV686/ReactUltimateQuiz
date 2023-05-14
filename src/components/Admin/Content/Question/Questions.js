@@ -14,18 +14,17 @@ const Questions = (props) => {
       ];
 
     const [ selectedQuiz, setSelectedQuiz ] = useState();
-
     const [ questions, setQuestions ] = useState(
         [
             {
                 id: uuidv4(),
-                description: 'questions 1',
+                description: '',
                 imageFile: '',
                 imageName: '',
                 answers: [
                     {
                         id: uuidv4(),
-                        description: 'answer 1',
+                        description: '',
                         isCorrect: false
                     }
                 ]
@@ -48,7 +47,6 @@ const Questions = (props) => {
                     }
                 ]
             }
-            
             setQuestions([...questions, newQuestion]);
         }
 
@@ -65,7 +63,7 @@ const Questions = (props) => {
         if(type === 'ADD'){
             const newAnswer = {
                 id: uuidv4(),
-                description: 'answer 1',
+                description: '',
                 isCorrect: false
             }
 
@@ -79,6 +77,55 @@ const Questions = (props) => {
             questionClone[index].answers = questionClone[index].answers.filter(item => item.id !== answerId)
             setQuestions(questionClone);
         }
+    }
+
+    const handleOnChange = (type, questionId, value) => {
+        if(type === 'QUESTION'){
+            let questionClone = _.cloneDeep(questions);
+            let index = questionClone.findIndex(item => item.id === questionId);
+
+            if(index > -1){
+                questionClone[index].description = value;
+                setQuestions(questionClone);
+            }
+        }
+    }
+
+    const handleOnChangeFileQuestion = (questionId, event) => {
+        let questionClone = _.cloneDeep(questions);
+        let index = questionClone.findIndex(item => item.id === questionId);
+
+        if(index > -1 && event.target && event.target.files && event.target.files[0]){
+            questionClone[index].imageFile = event.target.files[0];
+            questionClone[index].imageName = event.target.files[0].name;
+            console.log("File: ", event.target.files[0].name);
+            setQuestions(questionClone);
+        }
+    }
+
+    const handleAnswerQuestion = (type, questionId, answerId, value) => {
+        let questionClone = _.cloneDeep(questions);
+        let index = questionClone.findIndex(item => item.id === questionId);
+
+        if(index > -1){
+            questionClone[index].answers = questionClone[index].answers.map(answer => {
+                if(answer.id === answerId){
+                    if(type === 'CHECKBOX'){
+                        answer.isCorrect = value;
+                    }
+
+                    if(type === 'INPUT'){
+                        answer.description = value;
+                    }
+                }
+                return answer;
+            })
+            setQuestions(questionClone);
+        }
+    }
+
+    const handleSubmitQuestionForQuiz = () => {
+        console.log("Question: ", questions)
     }
 
     return(
@@ -105,17 +152,25 @@ const Questions = (props) => {
                                 <div className='question-content'>
                                     <div className="col-md-6">
                                         <input 
-                                        type="text" 
-                                        className="form-control"
-                                        value={question.description}
+                                            type="text" 
+                                            className="form-control"
+                                            value={question.description}
+                                            onChange={(event) => handleOnChange('QUESTION', question.id, event.target.value)}
                                         />
                                     </div>
                                     <div className="col-md-2">
-                                        <label className="form-label label-upload" htmlFor='labelUpload'><BiImageAdd className='icon-image'/>Upload File Image</label>
-                                        <input 
-                                        type='file' 
-                                        hidden
-                                        id='labelUpload'
+                                        <label 
+                                            className="form-label label-upload" 
+                                            htmlFor={`{question.id}`}
+                                        >
+                                            <BiImageAdd className='icon-image'/>
+                                            { question && question.imageName ? question.imageName : 'Upload File Image'}
+                                        </label>
+                                        <input
+                                            type='file' 
+                                            hidden
+                                            id={`{question.id}`}
+                                            onChange={(event) => handleOnChangeFileQuestion(question.id, event)}
                                         />
                                     </div>
                                     <div className='col-md-5 btn-add'>
@@ -134,39 +189,51 @@ const Questions = (props) => {
                                     question.answers && question.answers.length > 0
                                     && question.answers.map((answer, index) => {
                                         return(
-                                            <>
-                                                <div key={answer.id} className='answer-content mt-3'>
-                                                    <div className="form-check mt-1">
-                                                        <input className="form-check-input" 
-                                                            type="checkbox"
-                                                        />
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        <input
-                                                        type="text" 
-                                                        value={answer.description}
-                                                        className="form-control"
-                                                        />
-                                                    </div>
-                                                    <div className='col-md-5 btn-add'>
-                                                        <span onClick={() => handleAddRemoveAnswer('ADD', question.id, '')}>
-                                                            <BsPatchPlusFill className='icon-add'/>
-                                                        </span>
-                                                        {
-                                                            question.answers && question.answers.length > 1 &&
-                                                            <span onClick={() => handleAddRemoveAnswer('REMOVE', question.id, answer.id)}>
-                                                                <BsFillPatchMinusFill className='icon-delete'/>
-                                                            </span>
-                                                        }
-                                                    </div>
+                                            <div key={answer.id} className='answer-content mt-3'>
+                                                <div className="form-check mt-1">
+                                                    <input className="form-check-input" 
+                                                        type="checkbox"
+                                                        checked={answer.isCorrect}
+                                                        onChange={(event) => handleAnswerQuestion('CHECKBOX', question.id, answer.id, event.target.checked)}
+                                                    />
                                                 </div>
-                                            </>
+                                                <div className="col-md-6">
+                                                    <input
+                                                    type="text" 
+                                                    value={answer.description}
+                                                    className="form-control"
+                                                    onChange={(event) => handleAnswerQuestion('INPUT', question.id, answer.id, event.target.value)}
+                                                />
+                                                </div>
+                                                <div className='col-md-5 btn-add'>
+                                                    <span onClick={() => handleAddRemoveAnswer('ADD', question.id, '')}>
+                                                        <BsPatchPlusFill className='icon-add'/>
+                                                    </span>
+                                                    {
+                                                        question.answers && question.answers.length > 1 &&
+                                                        <span onClick={() => handleAddRemoveAnswer('REMOVE', question.id, answer.id)}>
+                                                            <BsFillPatchMinusFill className='icon-delete'/>
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </div>
                                         )
                                     })
                                 }
                             </div>
                         )
                     })
+                }
+                {
+                    questions && questions.length > 0 &&
+                    <div>
+                        <button 
+                            className='btn btn-warning'
+                            onClick={() => handleSubmitQuestionForQuiz()}
+                        >
+                            Save Questions
+                        </button>
+                    </div>
                 }
             </div>
         </div>
