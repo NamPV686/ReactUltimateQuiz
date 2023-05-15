@@ -125,8 +125,6 @@ const DetailQuiz = (props) => {
             } else{
                 alert("Something wrongs...")
             }
-
-            console.log("postSubmitQuiz: ", res)
         }
     }
 
