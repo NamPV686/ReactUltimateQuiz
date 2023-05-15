@@ -4,7 +4,8 @@ import './Questions.scss';
 import {BiImageAdd} from 'react-icons/bi'
 import { BsPatchPlusFill, BsFillPatchMinusFill } from 'react-icons/bs';
 import { v4 as uuidv4 } from 'uuid';
-import _ from 'lodash';
+import _  from 'lodash';
+import Lightbox from 'react-awesome-lightbox';
 
 const Questions = (props) => {
     const options = [
@@ -13,6 +14,11 @@ const Questions = (props) => {
         { value: 'HARD', label: 'HARD' },
       ];
 
+    const [ dataImagePreview, setDataImagePreview ] = useState({
+        title: '',
+        url: ''
+    });
+    const [ isPreviewImage, setIsPreviewImage ] = useState(false);
     const [ selectedQuiz, setSelectedQuiz ] = useState();
     const [ questions, setQuestions ] = useState(
         [
@@ -42,7 +48,7 @@ const Questions = (props) => {
                 answers: [
                     {
                         id: uuidv4(),
-                        description: 'answer 1',
+                        description: '',
                         isCorrect: false
                     }
                 ]
@@ -59,7 +65,7 @@ const Questions = (props) => {
 
     const handleAddRemoveAnswer = (type, questionId, answerId) => {
         let questionClone = _.cloneDeep(questions);
-
+        console.log("Q: ", questions)
         if(type === 'ADD'){
             const newAnswer = {
                 id: uuidv4(),
@@ -70,6 +76,7 @@ const Questions = (props) => {
             let index = questionClone.findIndex(item => item.id === questionId);
             questionClone[index].answers.push(newAnswer);
             setQuestions(questionClone);
+            console.log("Q: ", questions)
         }
 
         if(type === 'REMOVE'){
@@ -98,7 +105,6 @@ const Questions = (props) => {
         if(index > -1 && event.target && event.target.files && event.target.files[0]){
             questionClone[index].imageFile = event.target.files[0];
             questionClone[index].imageName = event.target.files[0].name;
-            console.log("File: ", event.target.files[0].name);
             setQuestions(questionClone);
         }
     }
@@ -128,6 +134,18 @@ const Questions = (props) => {
         console.log("Question: ", questions)
     }
 
+    const handlePreviewImage = (questionId) => {
+        let questionClone = _.cloneDeep(questions)
+        let index = questionClone.findIndex(item => item.id === questionId)
+        if(index > -1){
+            setDataImagePreview({
+                url: URL.createObjectURL(questionClone[index].imageFile),
+                title: questionClone[index].imageName
+            })
+            setIsPreviewImage(true);
+        }
+    }
+
     return(
         <div className="questions-container">
             <div className="title">
@@ -154,6 +172,7 @@ const Questions = (props) => {
                                         <input 
                                             type="text" 
                                             className="form-control"
+                                            placeholder='Question'
                                             value={question.description}
                                             onChange={(event) => handleOnChange('QUESTION', question.id, event.target.value)}
                                         />
@@ -161,17 +180,24 @@ const Questions = (props) => {
                                     <div className="col-md-2">
                                         <label 
                                             className="form-label label-upload" 
-                                            htmlFor={`{question.id}`}
+                                            htmlFor={`${question.id}`}
                                         >
-                                            <BiImageAdd className='icon-image'/>
-                                            { question && question.imageName ? question.imageName : 'Upload File Image'}
+                                            <span><BiImageAdd className='icon-image'/></span>
                                         </label>
                                         <input
                                             type='file' 
                                             hidden
-                                            id={`{question.id}`}
+                                            id={`${question.id}`}
                                             onChange={(event) => handleOnChangeFileQuestion(question.id, event)}
                                         />
+                                        <span>
+                                            { 
+                                                question && question.imageName ? 
+                                                <span onClick={() => handlePreviewImage(question.id)}>{question.imageName} </span>
+                                                : 
+                                                'Upload File Image'
+                                            }
+                                        </span>
                                     </div>
                                     <div className='col-md-5 btn-add'>
                                         <span onClick={() => handleAddRemoveQuestion('ADD', '')}>
@@ -200,6 +226,7 @@ const Questions = (props) => {
                                                 <div className="col-md-6">
                                                     <input
                                                     type="text" 
+                                                    placeholder='Answer'
                                                     value={answer.description}
                                                     className="form-control"
                                                     onChange={(event) => handleAnswerQuestion('INPUT', question.id, answer.id, event.target.value)}
@@ -234,6 +261,14 @@ const Questions = (props) => {
                             Save Questions
                         </button>
                     </div>
+                }
+                {
+                    isPreviewImage === true &&
+                    <Lightbox 
+                        image={dataImagePreview.url}
+                        title={dataImagePreview.title} 
+                        onClose={() => setIsPreviewImage(false)}
+                    ></Lightbox>
                 }
             </div>
         </div>
