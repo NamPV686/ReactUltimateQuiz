@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import './Questions.scss';
 import {BiImageAdd} from 'react-icons/bi'
@@ -6,20 +6,14 @@ import { BsPatchPlusFill, BsFillPatchMinusFill } from 'react-icons/bs';
 import { v4 as uuidv4 } from 'uuid';
 import _  from 'lodash';
 import Lightbox from 'react-awesome-lightbox';
+import { getAllQuizForAdmin, postCreateNewQuestionForQuiz, postCreateNewAnswerForQuestion } from '../../../../services/apiService';
 
 const Questions = (props) => {
-    const options = [
-        { value: 'EASY', label: 'EASY' },
-        { value: 'MEDIUM', label: 'MEDIUM' },
-        { value: 'HARD', label: 'HARD' },
-      ];
-
     const [ dataImagePreview, setDataImagePreview ] = useState({
         title: '',
         url: ''
     });
-    const [ isPreviewImage, setIsPreviewImage ] = useState(false);
-    const [ selectedQuiz, setSelectedQuiz ] = useState();
+
     const [ questions, setQuestions ] = useState(
         [
             {
@@ -38,6 +32,26 @@ const Questions = (props) => {
         ]
     );
 
+    const [ isPreviewImage, setIsPreviewImage ] = useState(false);
+    const [ listQuiz, setListQuiz ] = useState([]);
+    const [ selectedQuiz, setSelectedQuiz ] = useState();
+
+    useEffect(() => {
+        fetchQuiz();
+    }, []);
+
+    const fetchQuiz = async() => {
+        let res = await getAllQuizForAdmin();
+        if(res && res.EC === 0){
+            let newQuiz = res.DT.map(item => {
+                return({
+                    value: item.id,
+                    label: `${item.id}-${item.description}`
+                })
+            })
+            setListQuiz(newQuiz);
+        }
+    }
     const handleAddRemoveQuestion = (type, id) => {
         if(type === 'ADD'){
             const newQuestion = {
@@ -65,7 +79,6 @@ const Questions = (props) => {
 
     const handleAddRemoveAnswer = (type, questionId, answerId) => {
         let questionClone = _.cloneDeep(questions);
-        console.log("Q: ", questions)
         if(type === 'ADD'){
             const newAnswer = {
                 id: uuidv4(),
@@ -76,7 +89,6 @@ const Questions = (props) => {
             let index = questionClone.findIndex(item => item.id === questionId);
             questionClone[index].answers.push(newAnswer);
             setQuestions(questionClone);
-            console.log("Q: ", questions)
         }
 
         if(type === 'REMOVE'){
@@ -130,8 +142,23 @@ const Questions = (props) => {
         }
     }
 
-    const handleSubmitQuestionForQuiz = () => {
-        console.log("Question: ", questions)
+    const handleSubmitQuestionForQuiz = async() => {
+        //Submit question
+        await Promise.all(questions.map(async(question) => {
+            const q = await postCreateNewQuestionForQuiz(
+                +selectedQuiz.value, 
+                question.description, 
+                question.imageFile);
+
+                await Promise.all(question.answers.map(async(answer) => {
+                    await postCreateNewAnswerForQuestion(
+                        answer.description, 
+                        answer.isCorrect, 
+                        q.DT.id
+                        )
+                }))
+        }))
+        //Submit answer
     }
 
     const handlePreviewImage = (questionId) => {
@@ -157,7 +184,7 @@ const Questions = (props) => {
                     <Select
                         defaultValue={selectedQuiz}
                         onChange={setSelectedQuiz}
-                        options={options}
+                        options={listQuiz}
                         placeholder={"Question type..."}
                     />
                 </div>
