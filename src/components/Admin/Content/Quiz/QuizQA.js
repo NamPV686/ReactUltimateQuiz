@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
-import './Questions.scss';
+import './QuizQA.scss';
 import {BiImageAdd} from 'react-icons/bi'
 import { BsPatchPlusFill, BsFillPatchMinusFill } from 'react-icons/bs';
 import { v4 as uuidv4 } from 'uuid';
 import _  from 'lodash';
 import Lightbox from 'react-awesome-lightbox';
-import { getAllQuizForAdmin, postCreateNewQuestionForQuiz, postCreateNewAnswerForQuestion } from '../../../../services/apiService';
+import { getAllQuizForAdmin, postCreateNewQuestionForQuiz, postCreateNewAnswerForQuestion, getQuizWithQA } from '../../../../services/apiService';
 import { toast } from 'react-toastify';
 
-const Questions = (props) => {
+const QuizQA = (props) => {
     const initQuestions = [
         {
             id: uuidv4(),
@@ -40,6 +40,38 @@ const Questions = (props) => {
     useEffect(() => {
         fetchQuiz();
     }, []);
+
+    useEffect(() => {
+        if(selectedQuiz && selectedQuiz.value){
+            fetchQuizWithQA();
+        }
+    }, [selectedQuiz]);
+
+    //return a promise that resolves with a File instance
+    function urltoFile(url, filename, mimeType){
+        return (fetch(url)
+            .then(function(res){return res.arrayBuffer();})
+            .then(function(buf){return new File([buf], filename,{type:mimeType});})
+        );
+    }
+
+    const fetchQuizWithQA = async() => {
+        let res = await  getQuizWithQA(+selectedQuiz.value);
+
+        if(res && res.EC ===0){
+            //Convert base64 to file Oobject
+            let newQA =[];
+            for(let i = 0; i < res.DT.qa.length; i++){
+                let q = res.DT.qa[i];
+                if(q.imageFile){
+                    q.imageName = `Question-${q.id}.png`;
+                    q.imageFile = await urltoFile(`data:image/png;base64,${q.imageFile}`,`Question-${q.id}.png`);
+                }
+                newQA.push(q);
+            }
+            setQuestions(newQA)
+        }
+    }
 
     const fetchQuiz = async() => {
         let res = await getAllQuizForAdmin();
@@ -220,9 +252,6 @@ const Questions = (props) => {
 
     return(
         <div className="questions-container">
-            <div className="title">
-                Manager Question
-            </div>
             <div className="add-new-question">
                 <label>Select Quiz</label>
                 <div className='col-6 from-group mt-1 mb-3'>
@@ -347,4 +376,4 @@ const Questions = (props) => {
     )
 } 
 
-export default Questions;
+export default QuizQA;

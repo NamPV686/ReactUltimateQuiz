@@ -8,6 +8,8 @@ import Accordion from 'react-bootstrap/Accordion';
 import ModalDeleteQuiz from './ModalDeleteQuiz';
 import ModalUpdateQuiz from './ModalUpdateQuiz';
 import ModalViewQuiz from './ModalViewQuiz';
+import QuizQA from './QuizQA';
+import AssignQuiz from './AssignQuiz';
 
 const ManageQuiz = () => {
     const options = [
@@ -153,19 +155,36 @@ const ManageQuiz = () => {
                                         Save
                                     </button>
                                 </div>
+                                <div className="list-detail mt-3">
+                                    <TableQuiz 
+                                        listQuiz={listQuiz}
+                                        handleClickBtnDelete={handleClickBtnDelete}
+                                        handleClickBtnUpdate={handleClickBtnUpdate}
+                                        handleClickBtnView={handleClickBtnView}
+                                    />
+                                </div>
                             </fieldset>
                         </div>
                     </Accordion.Body>
                 </Accordion.Item>
+                <Accordion.Item eventKey="2">
+                    <Accordion.Header className="title">Update Q/A Quizzes</Accordion.Header>
+                    <Accordion.Body>
+                        <fieldset className="border rounded-3 p-3">
+                            <legend className="float-none w-auto px-3">Manager Question</legend>
+                            <QuizQA/>
+                        </fieldset>
+                    </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="3">
+                    <Accordion.Header className="title">Assign to Users</Accordion.Header>
+                    <Accordion.Body>
+                        <fieldset className="border rounded-3 p-3">
+                            <AssignQuiz />
+                        </fieldset>
+                    </Accordion.Body>
+                </Accordion.Item>
             </Accordion>
-            <div className="list-detail mt-3">
-                <TableQuiz 
-                    listQuiz={listQuiz}
-                    handleClickBtnDelete={handleClickBtnDelete}
-                    handleClickBtnUpdate={handleClickBtnUpdate}
-                    handleClickBtnView={handleClickBtnView}
-                />
-            </div>
             <ModalDeleteQuiz
                 show={showModalDeleteQuiz} 
                 setShow={setShowModalDeleteQuiz}

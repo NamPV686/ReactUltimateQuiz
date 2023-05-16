@@ -1,6 +1,8 @@
 .list-quiz-container{
     display: flex;
     gap: 50px;
+    flex-wrap: wrap;
+    justify-content: center;
 
     img{
         height: 200px;
