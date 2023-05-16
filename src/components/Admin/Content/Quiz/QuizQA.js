@@ -6,7 +6,7 @@ import { BsPatchPlusFill, BsFillPatchMinusFill } from 'react-icons/bs';
 import { v4 as uuidv4 } from 'uuid';
 import _  from 'lodash';
 import Lightbox from 'react-awesome-lightbox';
-import { getAllQuizForAdmin, postCreateNewQuestionForQuiz, postCreateNewAnswerForQuestion, getQuizWithQA } from '../../../../services/apiService';
+import { getAllQuizForAdmin, postUpsertQA, getQuizWithQA } from '../../../../services/apiService';
 import { toast } from 'react-toastify';
 
 const QuizQA = (props) => {
@@ -221,22 +221,32 @@ const QuizQA = (props) => {
         }
 
         //Submit question
-        for(const question of questions){
-            const q = await postCreateNewQuestionForQuiz(
-                +selectedQuiz.value, 
-                question.description, 
-                question.imageFile);
+        let questionClone = _.cloneDeep(questions);
 
-            //Submit answer
-            for(const answer of question.answers){
-                await postCreateNewAnswerForQuestion(
-                    answer.description, 
-                    answer.isCorrect, 
-                    q.DT.id);
+        for(let i = 0; i< questionClone.length; i++){
+            if(questionClone[i].imageFile){
+                questionClone[i].imageFile = await toBase64(questionClone[i].imageFile);
             }
         }
-        toast.success('Create question and answer success!');
+        let res = await postUpsertQA({
+            quizId: selectedQuiz.value,
+            questions: questionClone
+        });
+
+        if(res && res.EC === 0){
+            toast.success(res.EM);
+            fetchQuizWithQA();
+        } else{
+            toast.error(res.EM);
+        }
     }
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+    });
 
     const handlePreviewImage = (questionId) => {
         let questionClone = _.cloneDeep(questions)
