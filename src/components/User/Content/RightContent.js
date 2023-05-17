@@ -1,12 +1,13 @@
 import '../DetailQuiz.scss';
+import CountDown from './CountDown';
 
 const RightContent = (props) => {
-    const { dataQuiz } = props;
+    const { dataQuiz, handleFinish } = props;
 
     return(
         <>
             <div className='main-timer'>
-                10:10
+                <CountDown handleFinish={handleFinish} />
             </div>
             <div className='main-question'>
                 {
