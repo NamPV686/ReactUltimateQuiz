@@ -6,6 +6,7 @@ import './DetailQuiz.scss';
 import { useState } from "react";
 import Question from "./Question";
 import ModalResult from "./ModalResult";
+import RightContent from "./Content/RightContent";
 
 const DetailQuiz = (props) => {
     const params = useParams();
@@ -152,7 +153,9 @@ const DetailQuiz = (props) => {
                 </div>
             </div>
             <div className="right-content">
-                right-content
+                <RightContent 
+                    dataQuiz={dataQuiz}
+                />
             </div>
             <ModalResult 
                 show={isShowModalResult} 

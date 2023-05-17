@@ -55,5 +55,35 @@
         border-radius: 5px;
         padding: 20px;
 
+        .main-timer{
+            border-bottom: 1px dashed;
+            padding-bottom: 18px;
+            text-align: center;
+            padding-top: 10px;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .main-question{
+            display: flex;
+            gap: 21px;
+            flex-wrap: wrap;
+            padding: 30px;
+        }
+
+        .question{
+            width: 36px;
+            height: 36px;
+            border: 1px solid #878787;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+
+            &:hover{
+                color: red;
+            }
+        }
     }
 }
