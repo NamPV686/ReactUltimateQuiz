@@ -50,6 +50,12 @@ const Login = () => {
         }
     }
 
+    const handleKewDown = (event) => {
+        if(event.key === 'Enter'){
+            handleLogin();
+        }
+    }
+
     return(
         <div className="login-container">
             <div className='header'>
@@ -79,6 +85,7 @@ const Login = () => {
                         className='form-control'
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
+                        onKeyDown={(event) => handleKewDown(event)}
                     />
                 </div>
                 <span>Forgot password</span>
