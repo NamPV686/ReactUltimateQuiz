@@ -6,6 +6,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { postSignUp } from '../../services/apiService';
 import {toast } from 'react-toastify';
 import {useNavigate} from 'react-router-dom';
+import Language from '../Header/Language';
 
 const Register = () => {
     const [email, setEmail] = useState("");
@@ -56,6 +57,7 @@ const Register = () => {
             <div className='header'>
                 <span>Already have an account?</span>
                 <button onClick={() => navigate("/login")}>Login</button>
+                <Language />
             </div>
             <div className='title col-4 mx-auto'>
                 Quiz

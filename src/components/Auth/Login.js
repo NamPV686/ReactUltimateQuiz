@@ -7,6 +7,7 @@ import {toast } from 'react-toastify';
 import {NavLink, useNavigate} from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { doLogin } from '../../redux/action/userAction';
+import Language from '../Header/Language';
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -61,6 +62,7 @@ const Login = () => {
             <div className='header'>
                 <span>Don't have an account yet?</span>
                 <button onClick={() => navigate("/register")}>SignUp</button>
+                <Language />
             </div>
             <div className='title col-4 mx-auto'>
                 Quiz
