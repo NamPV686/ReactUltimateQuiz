@@ -1,11 +1,13 @@
 import videoHomepage from '../../assets/video-homepage.mp4'
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { useTranslation, Trans } from 'react-i18next';
 
 const HomePage = (props) => {
     const account = useSelector(state => state.user.account);
     const isAuthenticated = useSelector(state => state.user.isAuthenticated);
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     return (
         <div className="homepage-container">
@@ -13,18 +15,20 @@ const HomePage = (props) => {
                 <source src={videoHomepage} type="video/mp4" />
             </video>
             <div className='homepage-content'>
-                <div>
-                    <h1>There's a better way to ask</h1>
+                <div className='title-1'>
+                    <h1>
+                        {t('homepage.title1')}
+                    </h1>
                 </div>
                 <div>
-                    <p>You don't want to make a boring form. And your audience won't answer one. Create a typeform instead—and make everyone happy.</p>
+                    <p>{t('homepage.title2')}</p>
                 </div>
                 <div>
                     {
                         isAuthenticated === false ?
-                        <button className='btn-signup' onClick={() => navigate('/login')}>Get started - it's free</button>
+                        <button className='btn-signup' onClick={() => navigate('/login')}>{t('homepage.title3')}</button>
                         :
-                        <button className='btn-signup' onClick={() => navigate('/users')}>Doing quiz now</button>
+                        <button className='btn-signup' onClick={() => navigate('/users')}>{t('homepage.title4')}</button>
 
                     }
                 </div>
