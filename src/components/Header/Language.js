@@ -7,7 +7,6 @@ const Language = (props) => {
     // const [ title, setTitle ] = useState("Việt Nam");
     const [ title, setTitle ] = useState(i18n.language==='vi' ? "Việt Nam" : "English");
 
-    console.log("i: ",i18n.language)
     const handleChangeLanguage = (language) => {
         i18n.changeLanguage(language);
         if(language === 'vi'){
